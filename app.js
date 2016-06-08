@@ -189,6 +189,7 @@ function findAdjugate(matrix){
 
 }
 
+// Matrix multiplication --> multiply inverse matrix on equalities --> answer
 function multiply(matrix, equalities){
   var answer = [];
   matrix.forEach(function(value){
