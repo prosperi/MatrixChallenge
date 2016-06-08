@@ -42,7 +42,6 @@ function init(){
     }
   }
 
-  console.log(variables);
 
   // Validate input
   exp = new RegExp("^((\\d*[a-z][\\+-])*\\d*[a-z]\\=(\\d+),?){" + Object.keys(variables).length + "}");
@@ -115,8 +114,19 @@ function calculateDifficult(matrix, equalities){
       inverse = [];
 
   determinant = determinantForThree(matrix);
-  console.log(findCofactor(matrix));
-  return determinant;
+  inverse = findAdjugate(matrix);
+
+
+  inverse = inverse.map(function(row){
+    row = row.map(function(col){
+      return col / determinant;
+    });
+    return row;
+  });
+
+  console.log(inverse);
+
+  return inverse;
 }
 
 // 2X2 Determinant
@@ -153,4 +163,26 @@ function findCofactor(matrix){
     }
   }
   return cofactor;
+}
+
+// 3X3 matrix adjugate matrix finder
+function findAdjugate(matrix){
+  var adjugate = [],
+      cofactor = findCofactor(matrix),
+      power = 0;
+
+  for(var row = 0; row < cofactor.length; row++){
+    adjugate.push([0,0,0]);
+  }
+
+  for(var i = 0; i < cofactor.length; i++){
+    for(var j = 0; j < cofactor.length; j++){
+      var m = cofactor[i][j] * Math.pow(-1, power);
+      adjugate[j][i] = m;
+      power++;
+    }
+  }
+
+  return adjugate;
+
 }
