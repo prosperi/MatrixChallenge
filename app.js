@@ -14,7 +14,9 @@ function calculate(){
       });
     }else{
       // Solve for 3X3 Matrix
-      answer.textContent += "Determinant = " + calculateDifficult(args.matrix, args.equalities);
+      calculateDifficult(args.matrix, args.equalities).forEach(function(value, index){
+        answer.textContent += Object.keys(args.variables)[index] + ":" + value + " | ";
+      });
     }
 
 
@@ -124,9 +126,9 @@ function calculateDifficult(matrix, equalities){
     return row;
   });
 
-  console.log(inverse);
+  answer = multiply(inverse, equalities);
 
-  return inverse;
+  return answer;
 }
 
 // 2X2 Determinant
@@ -185,4 +187,19 @@ function findAdjugate(matrix){
 
   return adjugate;
 
+}
+
+function multiply(matrix, equalities){
+  var answer = [];
+  matrix.forEach(function(value){
+
+    var sum = 0;
+    value.forEach(function(value, index){
+      sum += value * equalities[index];
+    });
+    answer.push(sum);
+
+  });
+
+  return answer;
 }
