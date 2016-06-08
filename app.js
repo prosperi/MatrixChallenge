@@ -1,6 +1,30 @@
 var system = document.getElementsByName("system")[0];
 var answer = document.getElementsByTagName("code")[1];
 
+// Calculate
+function calculate(){
+  var args = init();
+
+  if(args != null){
+
+    if(args.matrix.length == 2){
+      // Solve problem for two equation system, 2X2 Matrix
+      calculateEasy(args.matrix, args.equalities).forEach(function(value, index){
+        answer.textContent += Object.keys(args.variables)[index] + ":" + value + " | ";
+      });
+    }else{
+      // Solve for 3X3 Matrix
+      answer.textContent += "Determinant = " + calculateDifficult(args.matrix, args.equalities);
+    }
+
+
+  }else{
+    answer.textContent += "Wrong Input";
+  }
+
+}
+
+// Initialize
 function init(){
 
   var variables = {},
@@ -11,21 +35,26 @@ function init(){
 
   answer.textContent = "Answer: ";
 
+  // Find which variables are used
   for(var i = 0; i < system.value.length; i++){
     if(/[a-z]/.test(system.value.charAt(i)) && !(system.value.charAt(i) in variables)){
       variables[system.value.charAt(i)] = [];
     }
   }
 
-  exp = new RegExp("^((\\d*[a-z][\\+-])+\\d*[a-z]\\=(\\d+),?){" + Object.keys(variables).length + "}");
+  console.log(variables);
+
+  // Validate input
+  exp = new RegExp("^((\\d*[a-z][\\+-])*\\d*[a-z]\\=(\\d+),?){" + Object.keys(variables).length + "}");
 
   if(exp.test(equations)){
+    // Create matrix according to the input
     for(var i = 0; i < equations.length; i++){
       matrix.push([]);
       equalities.push(Number(/\d+$/.exec(equations[i])[0]));
       for(var vrb in variables){
         var vrbExp = new RegExp("(\\d*)" + vrb);
-
+        // Define variable coeficient
         if(vrbExp.test(equations[i])){
           var result = vrbExp.exec(equations[i])[1];
           (result) ? variables[vrb].push(Number(result)) : variables[vrb].push(1);
@@ -38,29 +67,34 @@ function init(){
       }
     }
 
-    answer.textContent += calculate(matrix, equalities);
+    return {
+      matrix: matrix,
+      equalities: equalities,
+      variables: variables
+    };
+
   }else{
-    answer.textContent += "Wrong Input";
+    return null;
   }
 
 
 }
 
-
-function calculate(matrix, equalities){
+// Solve for 2X2 matrix
+function calculateEasy(matrix, equalities){
 
   var determinant,
       answer = [],
       inverse = [];
 
   // Find Determinant Of 2X2 Matrix
-  determinant = matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
+  determinant = determinantForTwo(matrix);
 
   // Find the inverse matrix by multiplying given matrix by 1/determinant
   inverse.push([ matrix[1][1]/determinant, -matrix[0][1]/determinant ]);
   inverse.push([ -matrix[1][0]/determinant, matrix[0][0]/determinant ]);
 
-  // Find solution of system by multiplying inverse matrix on equalities matrix(numbers without variable),
+  // Find solution of system by multiplying inverse matrix on equalities' matrix(numbers without variable),
   // This contains plain math - 2X2 matrix multiplication on 2X1 one
   // Result will be a matrix of solutions for the system
   answer.push(inverse[0][0] * equalities[0] + inverse[0][1] * equalities[1]);
@@ -72,4 +106,51 @@ function calculate(matrix, equalities){
 
 
   return answer;
+}
+
+//Solve for 3X3 and upper matrix
+function calculateDifficult(matrix, equalities){
+  var determinant,
+      answer = [],
+      inverse = [];
+
+  determinant = determinantForThree(matrix);
+  console.log(findCofactor(matrix));
+  return determinant;
+}
+
+// 2X2 Determinant
+function determinantForTwo(matrix){
+  // Simply find 2X2 matrix determinant
+  return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
+}
+
+// 3X3 Determinant
+function determinantForThree(matrix){
+  // Simply find 3X3 matrix determinant
+  return matrix[0][0] * determinantForTwo([ [matrix[1][1], matrix[1][2]], [matrix[2][1], matrix[2][2]] ]) -
+         matrix[0][1] * determinantForTwo([ [matrix[1][0], matrix[1][2]], [matrix[2][0], matrix[2][2]] ]) +
+         matrix[0][2] * determinantForTwo([ [matrix[1][0], matrix[1][1]], [matrix[2][0], matrix[2][1]] ]);
+}
+
+// 3X3 matrix cofactor
+function findCofactor(matrix){
+  var cofactor = [];
+  for(var i = 0; i < matrix.length; i++){
+    cofactor.push([]);
+    for(var j = 0; j < matrix.length; j++){
+
+      var value = [];
+      for(var row = 0; row < matrix.length; row++){
+        for(var col = 0; col < matrix.length; col++){
+          if(row != i && col !== j) value.push(matrix[row][col]);
+        }
+      }
+
+      value = [[value[0], value[1]], [value[2], value[3]]];
+      cofactor[i].push(determinantForTwo(value));
+
+    }
+  }
+  return cofactor;
 }
