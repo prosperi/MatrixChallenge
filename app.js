@@ -68,6 +68,8 @@ function init(){
       }
     }
 
+    console.log(matrix, equalities, variables);
+
     return {
       matrix: matrix,
       equalities: equalities,
