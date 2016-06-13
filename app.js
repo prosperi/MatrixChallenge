@@ -1,5 +1,5 @@
-var system = document.getElementsByName("system")[0];
-var answer = document.getElementsByTagName("code")[1];
+var SYSTEM = document.getElementsByName("system")[0];
+var ANSWER = document.getElementsByTagName("code")[1];
 
 // Calculate
 function calculate(){
@@ -10,18 +10,18 @@ function calculate(){
     if(args.matrix.length == 2){
       // Solve problem for two equation system, 2X2 Matrix
       calculateEasy(args.matrix, args.equalities).forEach(function(value, index){
-        answer.textContent += Object.keys(args.variables)[index] + ":" + value + " | ";
+        ANSWER.textContent += Object.keys(args.variables)[index] + ":" + value + " | ";
       });
     }else{
       // Solve for 3X3 Matrix
       calculateDifficult(args.matrix, args.equalities).forEach(function(value, index){
-        answer.textContent += Object.keys(args.variables)[index] + ":" + value + " | ";
+        ANSWER.textContent += Object.keys(args.variables)[index] + ":" + value + " | ";
       });
     }
 
 
   }else{
-    answer.textContent += "Wrong Input";
+    ANSWER.textContent += "Wrong Input";
   }
 
 }
@@ -33,14 +33,14 @@ function init(){
       matrix = [],
       equalities = [],
       exp,
-      equations = system.value.replace(/ /g, '').split('\n');
+      equations = SYSTEM.value.replace(/ /g, '').split('\n');
 
-  answer.textContent = "Answer: ";
+  ANSWER.textContent = "Answer: ";
 
   // Find which variables are used
-  for(var i = 0; i < system.value.length; i++){
-    if(/[a-z]/.test(system.value.charAt(i)) && !(system.value.charAt(i) in variables)){
-      variables[system.value.charAt(i)] = [];
+  for(var i = 0; i < SYSTEM.value.length; i++){
+    if(/[a-z]/.test(SYSTEM.value.charAt(i)) && !(SYSTEM.value.charAt(i) in variables)){
+      variables[SYSTEM.value.charAt(i)] = [];
     }
   }
 
