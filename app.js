@@ -104,8 +104,8 @@ function calculateEasy(matrix, equalities){
   answer.push(inverse[1][0] * equalities[0] + inverse[1][1] * equalities[1]);
 
   // Round answers to nearest hundredth
-  answer[0] = Math.round(answer[0]*100)/100;
-  answer[1] = Math.round(answer[1]*100)/100;
+  answer[0] = answer[0].toFixed(3); //Math.round(answer[0]*100)/100;
+  answer[1] = answer[1].toFixed(3);
 
 
   return answer;
